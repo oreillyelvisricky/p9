@@ -27,8 +27,10 @@ walletContract.on("LogNumTransferLayers", (numTransferLayers) => {
   console.log("numTransferLayers:", numTransferLayers)
 })
 
-walletContract.on("LogTransferInQueue", (transferNum, receiver, amount, transferLayersIndex, executed) => {
+walletContract.on("LogTransferInQueue", (numTransferLayers, transferNum, receiver, amount, transferLayersIndex, executed) => {
   console.log("EVENT Wallet: LogTransferInQueue")
+
+  console.log("numTransferLayers:", numTransferLayers)
 
   console.log("transferNum:", transferNum)
   console.log("reveiver:", receiver)

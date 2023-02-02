@@ -20,7 +20,9 @@ contract Wallet {
     // mapping (uint => LayerLib.LayerAPI) layerFlow;
   }
 
+
   uint numTransferLayers;
+  uint totalNumTransferLayers;
   mapping (uint => mapping (uint => Layer)) TransferLayers;
 
   struct Transfer {
@@ -38,6 +40,8 @@ contract Wallet {
 
   event LogNumTransferLayers(uint numTransferLayers);
   event LogTransferInQueue(
+    uint numTransferLayers,
+
     uint256 transferNum,
     address receiver,
     uint256 amount,
@@ -48,43 +52,42 @@ contract Wallet {
   );
 
   function test(address _receiver) public virtual {
-    setTransferLayers();
+    testSetTransferLayers();
+    logTransferLayers();
 
-    uint256 amount = 1000;
-    makeTransfer(_receiver, amount);
+    // uint256 amount = 1000;
+    // makeTransfer(_receiver, amount);
 
     logTransfers();
   }
 
-  function setTransferLayers() private {
-    addTransferLayer();
-    addTransferLayer();
+  function testSetTransferLayers() private {
+    createTransferLayer(0, 0, 0, 100);
+    createTransferLayer(0, 1, 100, 200);
 
     emit LogNumTransferLayers(numTransferLayers);
   }
 
-  // Next: set the transfer layer at index
-  // So if we have 8 transfer layers, and want to insert at index 1 then ...
-
-  function addTransferLayer() private {
-    uint256 amountMin = 0;
-    uint256 amountMax = 100;
-
-    string [] memory tokens = [ "ETH", "USDC" ];
-
-    // Layer memory layer = createTransferLayer();
-
-    numTransferLayers++;
-  }
-
-  /*
-
   function createTransferLayer(
+    uint256 _transferNum,
+    uint256 _transferLayerNum,
+
     uint256 _amountMin,
-    uint256 _amountMax,
-    string [] memory _tokens
-  ) private returns (Layer memory) {
-    Layer storage layer = TransferLayers[][];
+    uint256 _amountMax
+  ) private {
+    // if adding a layer lock the transfers
+    // no new transfer can be made but we can queue it until this is done then make it
+    // 
+    // what about adding/removing/updating layers
+    // 
+
+    // Or get numTransfers and loop
+    // What is a new transfer gets added whilst this is happening
+    // lock
+    // always need to lock either way
+    // Tmp TransferLayer
+    // Then set it in TransferLayers diff function for
+    Layer storage layer = TransferLayers[_transferNum][_transferLayerNum];
 
     AmountMinMax memory amount = AmountMinMax({
       min: _amountMin,
@@ -93,12 +96,42 @@ contract Wallet {
 
     layer.amount = amount;
 
-    layer.tokens[layer.numTokens] = "ETH";
+    string [2] memory _tokens = [ "ETH", "USDC" ];
 
-    return layer;
+    for (uint i = 0; i < _tokens.length; i++) {
+      string memory token = _tokens[i];
+
+      layer.tokens[i] = token;
+
+      layer.numTokens++;
+    }
+
+    // If transfer layers are already set
+    // If there are already transfers
+    // We need to overwrite transferLayers
+    // Because they need to be in sequence
+
+    numTransferLayers++;
+    totalNumTransferLayers++;
   }
 
-  */
+  function setTransferLayers() private {
+    // set here include tmp
+  }
+
+  function logTransferLayers() private {
+    // numTransferLayers is the total number of TransferLayers
+    // That's for every transfer
+    // So if there's 3 layers per transfer
+    // And there's 100 transfers
+    // Then 300 transfer layers
+    // need a variable that keeps track of num transfer layers per transfer
+    // numTransferLayers = num per EACH transfer which is fixed
+    // totalNumTransferLayers = numTransferLayers * numTransfers
+    for (uint i = 0; i < totalNumTransferLayers; i++) {
+      //
+    }
+  }
 
   function makeTransfer(address _receiver, uint256 _amount) private {
     Transfer memory transfer = Transfer({
@@ -115,7 +148,24 @@ contract Wallet {
 
     numTransfers++;
   }
-  
+
+
+
+
+  function logTransferLayers() private {
+    // numTransferLayers is the total number of TransferLayers
+    // That's for every transfer
+    // So if there's 3 layers per transfer
+    // And there's 100 transfers
+    // Then 300 transfer layers
+    // need a variable that keeps track of num transfer layers per transfer
+    // numTransferLayers = num per EACH transfer which is fixed
+    // totalNumTransferLayers = numTransferLayers * numTransfers
+    for (uint i = 0; i < totalNumTransferLayers; i++) {
+      //
+    }
+  }
+
   function logTransfers() private {
     for (uint256 i = 0; i < numTransfers; i++) {
       Transfer memory transfer = transfers[i];
@@ -129,6 +179,8 @@ contract Wallet {
       bool executed = transfer.executed;
 
       emit LogTransferInQueue(
+        numTransferLayers,
+
         transferNum,
         receiver,
         amount,
