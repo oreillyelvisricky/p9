@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/cabox/workspace/p9/contracts/Wallet.sol": {
-      "lastModificationDate": 1675318556385,
-      "contentHash": "8d64f92b92a55a4082c724d0d05cdd75",
+      "lastModificationDate": 1675323765091,
+      "contentHash": "29ec1b5754dea216e2d4fbdf35c91ad1",
       "sourceName": "contracts/Wallet.sol",
       "solcConfig": {
         "version": "0.8.17",

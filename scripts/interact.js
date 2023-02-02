@@ -27,6 +27,14 @@ walletContract.on("LogNumTransferLayers", (numTransferLayers) => {
   console.log("numTransferLayers:", numTransferLayers)
 })
 
+walletContract.on("LogTransferLayer", (numTransferLayers, numTransfers, amountMin, amountMax) => {
+  console.log("EVENT Wallet: LogTransferLayer")
+  console.log("numTransferLayers:", numTransferLayers)
+  console.log("numTransfers:", numTransfers)
+  console.log("amountMin:", amountMin)
+  console.log("amountMax:", amountMax)
+})
+
 walletContract.on("LogTransferInQueue", (numTransferLayers, transferNum, receiver, amount, transferLayersIndex, executed) => {
   console.log("EVENT Wallet: LogTransferInQueue")
 

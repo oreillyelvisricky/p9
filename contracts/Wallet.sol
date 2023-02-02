@@ -22,7 +22,6 @@ contract Wallet {
 
 
   uint numTransferLayers;
-  uint totalNumTransferLayers;
   mapping (uint => mapping (uint => Layer)) TransferLayers;
 
   struct Transfer {
@@ -39,6 +38,13 @@ contract Wallet {
   mapping (uint => Transfer) transfers;
 
   event LogNumTransferLayers(uint numTransferLayers);
+  event LogTransferLayer(
+    uint numTransferLayers,
+    uint numTransfers,
+
+    uint256 amountMin,
+    uint256 amountMax
+  );
   event LogTransferInQueue(
     uint numTransferLayers,
 
@@ -53,7 +59,7 @@ contract Wallet {
 
   function test(address _receiver) public virtual {
     testSetTransferLayers();
-    logTransferLayers();
+    testLogTransferLayers();
 
     // uint256 amount = 1000;
     // makeTransfer(_receiver, amount);
@@ -112,14 +118,13 @@ contract Wallet {
     // Because they need to be in sequence
 
     numTransferLayers++;
-    totalNumTransferLayers++;
   }
 
-  function setTransferLayers() private {
+  function wtfsetTransferLayers() private {
     // set here include tmp
   }
 
-  function logTransferLayers() private {
+  function wtflogTransferLayers() private {
     // numTransferLayers is the total number of TransferLayers
     // That's for every transfer
     // So if there's 3 layers per transfer
@@ -128,9 +133,11 @@ contract Wallet {
     // need a variable that keeps track of num transfer layers per transfer
     // numTransferLayers = num per EACH transfer which is fixed
     // totalNumTransferLayers = numTransferLayers * numTransfers
+    /*
     for (uint i = 0; i < totalNumTransferLayers; i++) {
       //
     }
+    */
   }
 
   function makeTransfer(address _receiver, uint256 _amount) private {
@@ -152,7 +159,7 @@ contract Wallet {
 
 
 
-  function logTransferLayers() private {
+  function testLogTransferLayers() private {
     // numTransferLayers is the total number of TransferLayers
     // That's for every transfer
     // So if there's 3 layers per transfer
@@ -161,8 +168,20 @@ contract Wallet {
     // need a variable that keeps track of num transfer layers per transfer
     // numTransferLayers = num per EACH transfer which is fixed
     // totalNumTransferLayers = numTransferLayers * numTransfers
-    for (uint i = 0; i < totalNumTransferLayers; i++) {
-      //
+    // mapping (uint => mapping (uint => Layer)) TransferLayers;
+    for (uint i = 0; i < numTransferLayers; i++) {
+      Layer storage layer = TransferLayers[0][i];
+
+      uint256 amountMin = layer.amount.min;
+      uint256 amountMax = layer.amount.max;
+
+      emit LogTransferLayer(
+        numTransferLayers,
+        numTransfers,
+
+        amountMin,
+        amountMax
+      );
     }
   }
 
